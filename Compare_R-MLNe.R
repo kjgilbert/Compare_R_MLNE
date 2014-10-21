@@ -22,12 +22,12 @@ mlne.moment <- function(input){
 		temp.focal_t1 <- as.numeric(strsplit(focal_current[i], split=" ")[[1]]) / sum(as.numeric(strsplit(focal_current[i], split=" ")[[1]]))
 		temp.focal_t0 <- as.numeric(strsplit(focal_t0[i], split=" ")[[1]]) / sum(as.numeric(strsplit(focal_t0[i], split=" ")[[1]]))
 		temp.source_t0 <- as.numeric(strsplit(source_t0[i], split=" ")[[1]]) / sum(as.numeric(strsplit(source_t0[i], split=" ")[[1]]))
-		B_T <- c(B_T, temp.focal_t1)
-		B_0 <- c(B_0, temp.focal_t0)
-		A_0 <- c(A_0, temp.source_t0)
+		B_T <- c(B_T, temp.focal_t1[1])
+		B_0 <- c(B_0, temp.focal_t0[1])
+		A_0 <- c(A_0, temp.source_t0[1])
 	}
-	x_ab <- A_0[1] - B_0[1]
-	x_bt <- B_T[1] - B_0[1]
+	x_ab <- A_0 - B_0
+	x_bt <- B_T - B_0
 
 	w_l <- x_ab^2
 	F_l <- x_bt/x_ab
