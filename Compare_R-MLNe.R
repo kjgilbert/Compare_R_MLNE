@@ -1,7 +1,10 @@
 #### WITH THE ACTUAL MLNE INPUT FILES
 
 input <- "~/Desktop/NewMLNeSims/Compare_R_MLNE/Oct8_MLNeIN_1.4_NoMig_mig500_meta0.1_gen17_NoMig_2alleles_sampled_1_1.dat"
-(ans <- mlne.moment(input))
+(ans <- mlne.moment(input)) # now am off by order of magnitude one too large
+
+# equation 8: m = 1-t_root(1 - (1/W) * sum over all l of w_l*F_l)
+#	equals for t=1: (1/W)*sum(w_l*F_l)
 
 mlne.moment <- function(input){
 		B_T <- NULL
@@ -23,8 +26,8 @@ mlne.moment <- function(input){
 		B_0 <- c(B_0, temp.focal_t0)
 		A_0 <- c(A_0, temp.source_t0)
 	}
-	x_ab <- A_0 - B_0
-	x_bt <- B_T - B_0
+	x_ab <- A_0[1] - B_0[1]
+	x_bt <- B_T[1] - B_0[1]
 
 	w_l <- x_ab^2
 	F_l <- x_bt/x_ab
