@@ -1,11 +1,12 @@
 #### WITH THE ACTUAL MLNE INPUT FILES
 
-input <- "~/Desktop/NewMLNeSims/Compare_R_MLNE/Oct8_MLNeIN_1.4_NoMig_mig500_meta0.1_gen17_NoMig_2alleles_sampled_1_1.dat"
+input <- "~/Desktop/NewMLNeSims/Compare_R_MLNE/slingshot_Oct8_MLNeIN_1.4_NoMig_mig500_meta0.1_gen17_NoMig_2alleles_sampled_1_1.dat"
 (ans <- mlne.moment(input)) 
-
-
+input <- "~/Desktop/NewMLNeSims/Compare_R_MLNE/test.dat"
+#input <- "~/Desktop/NewMLNeSims/Compare_R_MLNE/Oct8_MLNeIN_1.4_NoMig_mig500_meta0.1_gen17_NoMig_2alleles_sampled_1_1.dat"
 # equation 8: m = 1-t_root(1 - (1/W) * sum over all l of w_l*F_l)
 #	equals for t=1: (1/W)*sum(w_l*F_l)
+
 
 mlne.moment <- function(input){
 		B_T <- NULL
@@ -16,16 +17,17 @@ mlne.moment <- function(input){
 	focal_current <- dat[11:50]
 	focal_t0 <- dat[52:91]
 	source_t0 <- dat[94:133]
-	#max.loci <- dat[7]
+	#max.loci <- dat[7]	#don't want these anymore
 	#max.loci.list <- strsplit(max.loci, split=",")
-	
-	for(i in 1:40){
+	num.loci <- 40
+
+	for(i in 1:num.loci){
 		temp.focal_t1 <- as.numeric(strsplit(focal_current[i], split=" ")[[1]]) / sum(as.numeric(strsplit(focal_current[i], split=" ")[[1]]))
 		temp.focal_t0 <- as.numeric(strsplit(focal_t0[i], split=" ")[[1]]) / sum(as.numeric(strsplit(focal_t0[i], split=" ")[[1]]))
 		temp.source_t0 <- as.numeric(strsplit(source_t0[i], split=" ")[[1]]) / sum(as.numeric(strsplit(source_t0[i], split=" ")[[1]]))
-		B_T <- c(B_T, temp.focal_t1[1])
-		B_0 <- c(B_0, temp.focal_t0[1])
-		A_0 <- c(A_0, temp.source_t0[1])
+		B_T <- c(B_T, temp.focal_t1)
+		B_0 <- c(B_0, temp.focal_t0)
+		A_0 <- c(A_0, temp.source_t0)
 	}
 	x_ab <- A_0 - B_0
 	x_bt <- B_T - B_0
@@ -42,6 +44,20 @@ mlne.moment <- function(input){
 
 #input <- "~/Desktop/NewMLNeSims/CalculateAlleleFreqs/MLNeIN_5.6_NoMig_mig500_meta0.1_gen16_NoMig_t2_sampled_1_1.dat"
 #(ans1 <- mlne.moment(input))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
