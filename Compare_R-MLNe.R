@@ -45,14 +45,14 @@ mlne.moment <- function(input){
 
 
 
-in1 <- "~/Desktop/NewMLNeSims/Compare_R_MLNE/Oct8_MLNeIN_1.4_NoMig_mig500_meta0.1_gen17_NoMig_2alleles_sampled_1_1.dat"
-in2 <- "~/Desktop/NewMLNeSims/Compare_R_MLNE/Oct8_MLNeIN_1.4-14_NoMig_mig500_meta0.1_gen17_NoMig_2alleles_sampled_1_1.dat"
-in3 <- "~/Desktop/NewMLNeSims/Compare_R_MLNE/Oct8_MLNeIN_2.4-14_NoMig_mig500_meta0.1_gen17_NoMig_2alleles_sampled_1_1.dat"
-in4 <- "~/Desktop/NewMLNeSims/Compare_R_MLNE/Oct8_MLNeIN_2.7_NoMig_mig500_meta0.1_gen17_NoMig_2alleles_sampled_1_1.dat"
-in5 <- "~/Desktop/NewMLNeSims/Compare_R_MLNE/Oct8_MLNeIN_3.4-14_NoMig_mig500_meta0.1_gen17_NoMig_2alleles_sampled_1_1.dat"
-in6 <- "~/Desktop/NewMLNeSims/Compare_R_MLNE/Oct8_MLNeIN_3.11_NoMig_mig500_meta0.1_gen17_NoMig_2alleles_sampled_1_1.dat"
-in7 <- "~/Desktop/NewMLNeSims/Compare_R_MLNE/Oct8_MLNeIN_5.4.6-14_NoMig_mig500_meta0.1_gen17_NoMig_2alleles_sampled_1_1.dat"
-in8 <- "~/Desktop/NewMLNeSims/Compare_R_MLNE/Oct8_MLNeIN_5.6_NoMig_mig500_meta0.1_gen17_NoMig_2alleles_sampled_1_1.dat"
+in1 <- "~/Desktop/NewMLNeSims/Compare_R_MLNE/slingshot_Oct8_MLNeIN_1.4_NoMig_mig500_meta0.1_gen17_NoMig_2alleles_sampled_1_1.dat"
+in2 <- "~/Desktop/NewMLNeSims/Compare_R_MLNE/slingshot_Oct8_MLNeIN_1.4-14_NoMig_mig500_meta0.1_gen17_NoMig_2alleles_sampled_1_1.dat"
+in3 <- "~/Desktop/NewMLNeSims/Compare_R_MLNE/slingshot_Oct8_MLNeIN_2.4-14_NoMig_mig500_meta0.1_gen17_NoMig_2alleles_sampled_1_1.dat"
+in4 <- "~/Desktop/NewMLNeSims/Compare_R_MLNE/slingshot_Oct8_MLNeIN_2.7_NoMig_mig500_meta0.1_gen17_NoMig_2alleles_sampled_1_1.dat"
+in5 <- "~/Desktop/NewMLNeSims/Compare_R_MLNE/slingshot_Oct8_MLNeIN_3.4-14_NoMig_mig500_meta0.1_gen17_NoMig_2alleles_sampled_1_1.dat"
+in6 <- "~/Desktop/NewMLNeSims/Compare_R_MLNE/slingshot_Oct8_MLNeIN_3.11_NoMig_mig500_meta0.1_gen17_NoMig_2alleles_sampled_1_1.dat"
+in7 <- "~/Desktop/NewMLNeSims/Compare_R_MLNE/slingshot_Oct8_MLNeIN_5.4.6-14_NoMig_mig500_meta0.1_gen17_NoMig_2alleles_sampled_1_1.dat"
+in8 <- "~/Desktop/NewMLNeSims/Compare_R_MLNE/slingshot_Oct8_MLNeIN_5.6_NoMig_mig500_meta0.1_gen17_NoMig_2alleles_sampled_1_1.dat"
 
 in9 <- "~/Desktop/NewMLNeSims/Compare_R_MLNE/Oct8_MLNeIN_1.4-14_NoMig_mig500_meta0.01_gen167_NoMig_2alleles_sampled_1_1.dat"
 
