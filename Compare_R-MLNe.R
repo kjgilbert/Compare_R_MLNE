@@ -14,8 +14,8 @@ mlne.moment <- function(input){
 		A_0 <- NULL
 
 	dat <- readLines(input)
-	focal_current <- dat[11:50]
-	focal_t0 <- dat[52:91]
+	focal_current <- dat[52:91]
+	focal_t0 <- dat[11:50]
 	source_t0 <- dat[94:133]
 	#max.loci <- dat[7]	#don't want these anymore
 	#max.loci.list <- strsplit(max.loci, split=",")
@@ -72,20 +72,20 @@ in8 <- "~/Desktop/NewMLNeSims/Compare_R_MLNE/slingshot_Oct8_MLNeIN_5.6_NoMig_mig
 
 in9 <- "~/Desktop/NewMLNeSims/Compare_R_MLNE/Oct8_MLNeIN_1.4-14_NoMig_mig500_meta0.01_gen167_NoMig_2alleles_sampled_1_1.dat"
 
-(ans1 <- mlne.moment(in1))	# 1.4		0.1		R says m = 0.1362797, 	MLNe says m = 0.0740
-(ans2 <- mlne.moment(in2))	# 1.4-14	0.1		R says m = 0.1635086, 	MLNe says m = 0.0768
-(ans3 <- mlne.moment(in3))	# 2.4-14	0.1		R says m = -0.09536082, 	MLNe says m = 0.3
-(ans4 <- mlne.moment(in4))	# 2.7		0.1		R says m = 0.03055741, 	MLNe says m = 
-(ans5 <- mlne.moment(in5))	# 3.4-14	0.1		R says m = 0.3163315, 	MLNe says m = 
-(ans6 <- mlne.moment(in6))	# 3.11		0.1		R says m = 0.2825987, 	MLNe says m = 
-(ans7 <- mlne.moment(in7))	# 5.4,6-14	0.1		R says m = 0.2090635, 	MLNe says m = 
-(ans8 <- mlne.moment(in8))	# 5.6		0.1		R says m = 0.1514543, 	MLNe says m = 
+(ans1 <- mlne.moment(in1))	# 1.4		0.1		R says m = 0.1362797 now 0.07404012, 	MLNe says m = 0.0740
+(ans2 <- mlne.moment(in2))	# 1.4-14	0.1		R says m = 0.1635086 now 0.07679451, 	MLNe says m = 0.0768
+(ans3 <- mlne.moment(in3))	# 2.4-14	0.1		R says m = -0.09536082 now 0.2980059, 	MLNe says m = 0.3
+(ans4 <- mlne.moment(in4))	# 2.7		0.1		R says m = 0.03055741 now 0.2233919, 	MLNe says m = 
+(ans5 <- mlne.moment(in5))	# 3.4-14	0.1		R says m = 0.3163315 now 0.222839, 	MLNe says m = 
+(ans6 <- mlne.moment(in6))	# 3.11		0.1		R says m = 0.2825987 now 0.2589729, 	MLNe says m = 
+(ans7 <- mlne.moment(in7))	# 5.4,6-14	0.1		R says m = 0.2090635 now 0.2893987, 	MLNe says m = 
+(ans8 <- mlne.moment(in8))	# 5.6		0.1		R says m = 0.1514543 now 0.1787502, 	MLNe says m = 
 
 
-(ans9 <- mlne.moment(in9))	# 2.4-14	0.01 rep 1		R says m = 0.04111848, 	MLNe says m = 0.0103
+(ans9 <- mlne.moment(in9))	# 2.4-14	0.01 rep 1		R says m = 0.04111848 now 0.01033517, 	MLNe says m = 0.0103
 
 
-
+### I had time points mixed up in the input, now R matches MLNe output, but the mlne outputs are now originally wrong, since I gave the input in the wrong order, so the TRUE ANSWER SHOULD BE THE FIRST VALUES I HAD FROM R which are larger migration rates, so we haven't solved the problem of why there are non-zero migration rates for these cases
 
 
 
