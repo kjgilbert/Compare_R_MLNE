@@ -1,7 +1,8 @@
 #### WITH THE ACTUAL MLNE INPUT FILES
 
 input <- "~/Desktop/NewMLNeSims/Compare_R_MLNE/Oct8_MLNeIN_1.4_NoMig_mig500_meta0.1_gen17_NoMig_2alleles_sampled_1_1.dat"
-(ans <- mlne.moment(input)) # now am off by order of magnitude one too large
+(ans <- mlne.moment(input)) 
+
 
 # equation 8: m = 1-t_root(1 - (1/W) * sum over all l of w_l*F_l)
 #	equals for t=1: (1/W)*sum(w_l*F_l)
@@ -15,8 +16,8 @@ mlne.moment <- function(input){
 	focal_current <- dat[11:50]
 	focal_t0 <- dat[52:91]
 	source_t0 <- dat[94:133]
-	max.loci <- dat[7]
-	max.loci.list <- strsplit(max.loci, split=",")
+	#max.loci <- dat[7]
+	#max.loci.list <- strsplit(max.loci, split=",")
 	
 	for(i in 1:40){
 		temp.focal_t1 <- as.numeric(strsplit(focal_current[i], split=" ")[[1]]) / sum(as.numeric(strsplit(focal_current[i], split=" ")[[1]]))
@@ -33,7 +34,7 @@ mlne.moment <- function(input){
 	F_l <- x_bt/x_ab
 	W <- sum(w_l)
 
-	return(mig.rate <- (1/W)*sum(w_l*F_l, na.rm=TRUE))
+	return(mig.rate <- (1/W)*sum(w_l*F_l, na.rm=TRUE))	# Fortran eqn: MTM2=1.-ABS(1.-WF/WW)**(1./nt)
 }
 
 
@@ -53,15 +54,19 @@ in6 <- "~/Desktop/NewMLNeSims/Compare_R_MLNE/Oct8_MLNeIN_3.11_NoMig_mig500_meta0
 in7 <- "~/Desktop/NewMLNeSims/Compare_R_MLNE/Oct8_MLNeIN_5.4.6-14_NoMig_mig500_meta0.1_gen17_NoMig_2alleles_sampled_1_1.dat"
 in8 <- "~/Desktop/NewMLNeSims/Compare_R_MLNE/Oct8_MLNeIN_5.6_NoMig_mig500_meta0.1_gen17_NoMig_2alleles_sampled_1_1.dat"
 
+in9 <- "~/Desktop/NewMLNeSims/Compare_R_MLNE/Oct8_MLNeIN_1.4-14_NoMig_mig500_meta0.01_gen167_NoMig_2alleles_sampled_1_1.dat"
 
 (ans1 <- mlne.moment(in1))	# 1.4		0.1		R says m = 0.1362797, 	MLNe says m = 0.0740
 (ans2 <- mlne.moment(in2))	# 1.4-14	0.1		R says m = 0.1635086, 	MLNe says m = 0.0768
-(ans3 <- mlne.moment(in3))	# 2.4-14	0.1		R says m = -0.09536082, 	MLNe says m = 
+(ans3 <- mlne.moment(in3))	# 2.4-14	0.1		R says m = -0.09536082, 	MLNe says m = 0.3
 (ans4 <- mlne.moment(in4))	# 2.7		0.1		R says m = 0.03055741, 	MLNe says m = 
 (ans5 <- mlne.moment(in5))	# 3.4-14	0.1		R says m = 0.3163315, 	MLNe says m = 
 (ans6 <- mlne.moment(in6))	# 3.11		0.1		R says m = 0.2825987, 	MLNe says m = 
 (ans7 <- mlne.moment(in7))	# 5.4,6-14	0.1		R says m = 0.2090635, 	MLNe says m = 
 (ans8 <- mlne.moment(in8))	# 5.6		0.1		R says m = 0.1514543, 	MLNe says m = 
+
+
+(ans9 <- mlne.moment(in9))	# 2.4-14	0.01 rep 1		R says m = 0.04111848, 	MLNe says m = 0.0103
 
 
 
