@@ -40,25 +40,7 @@ mlne.moment <- function(input){
 }
 
 
-
-
-#input <- "~/Desktop/NewMLNeSims/CalculateAlleleFreqs/MLNeIN_5.6_NoMig_mig500_meta0.1_gen16_NoMig_t2_sampled_1_1.dat"
-#(ans1 <- mlne.moment(input))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+### I had time points mixed up in the input, now R matches MLNe output, but the mlne outputs are now originally wrong, since I gave the input in the wrong order, so the TRUE ANSWER SHOULD BE THE FIRST VALUES I HAD FROM R which are larger migration rates, so we haven't solved the problem of why there are non-zero migration rates for these cases
 
 
 in1 <- "~/Desktop/NewMLNeSims/Compare_R_MLNE/slingshot_Oct8_MLNeIN_1.4_NoMig_mig500_meta0.1_gen17_NoMig_2alleles_sampled_1_1.dat"
@@ -85,7 +67,6 @@ in9 <- "~/Desktop/NewMLNeSims/Compare_R_MLNE/Oct8_MLNeIN_1.4-14_NoMig_mig500_met
 (ans9 <- mlne.moment(in9))	# 2.4-14	0.01 rep 1		R says m = 0.04111848 now 0.01033517, 	MLNe says m = 0.0103
 
 
-### I had time points mixed up in the input, now R matches MLNe output, but the mlne outputs are now originally wrong, since I gave the input in the wrong order, so the TRUE ANSWER SHOULD BE THE FIRST VALUES I HAD FROM R which are larger migration rates, so we haven't solved the problem of why there are non-zero migration rates for these cases
 
 
 
