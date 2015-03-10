@@ -1,6 +1,6 @@
 #### WITH THE ACTUAL MLNE INPUT FILES
 
-input <- "~/Desktop/NewMLNeSims/Compare_R_MLNE/slingshot_Oct8_MLNeIN_1.4_NoMig_mig500_meta0.1_gen17_NoMig_2alleles_sampled_1_1.dat"
+input <- "~/Desktop/NewMLNeSims/Compare_R_MLNE/FixedMLNeIN_2.7_mig50_meta0.01_gen115_t2_1_001.dat"
 (ans <- mlne.moment(input)) 
 
 # equation 8: m = 1-t_root(1 - (1/W) * sum over all l of w_l*F_l)
@@ -13,9 +13,9 @@ mlne.moment <- function(input){
 		A_0 <- NULL
 
 	dat <- readLines(input)
-	focal_t0 <- dat[11:50]
-	focal_current <- dat[52:91]
-	source_t0 <- dat[94:133]
+	focal_t0 <- dat[12:51]
+	focal_current <- dat[54:93]
+	source_t0 <- dat[97:136]
 	#max.loci <- dat[7]	#don't want these anymore
 	#max.loci.list <- strsplit(max.loci, split=",")
 	num.loci <- 40
@@ -31,7 +31,7 @@ mlne.moment <- function(input){
 	x_ab <- A_0 - B_0
 	x_bt <- B_T - B_0
 
-	w_l <- x_ab^2
+	w_l <- (x_ab^2)#*(p_b0*q_b0 * (((1*S_bt))) )
 	F_l <- x_bt/x_ab
 	W <- sum(w_l)
 
