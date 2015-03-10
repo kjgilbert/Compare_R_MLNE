@@ -25,8 +25,9 @@ dist.sd <- 0.75	# this is sigma, one standard deviation
 
 par(mfrow=c(2,1))
 #plot this kernel
-x <- seq(-patches.x, patches.x, by=0.1)  # vector of length odd number so that there can be a middle match
+x <- seq(-patches.x/4, patches.x/4, by= 0.1)  # vector of length odd number so that there can be a middle match
 y <- dnorm(x, mean=dist.mean, sd=dist.sd)
+x2 <- seq(-patches.x/4, (patches.x/4)-by.breaks, by= by.breaks)  # vector of length odd number so that there can be a middle match
 plot(x,y, pch=20, xlim=c(-patches.x/100, patches.x/100))
 
 #plot the cumulative density of this kernel
@@ -68,8 +69,9 @@ points(x, ((y*prop.dist1) + (z*prop.dist2)), col="blue")
 #  *** IF USING MULTIPLE DISTRIBUTIONS FROM ABOVE, UNCODE FOLLOWING LINES to use the values combined and normalized
 #	z will be overwritten in the code below, so don't try to use it again
 #
-# y <- ((y*prop.dist1) + (z*prop.dist2))
-# y2 <- ((y2*prop.dist1) + (z2*prop.dist2))
+ y <- ((y*prop.dist1) + (z*prop.dist2))
+ y2 <- ((y2*prop.dist1) + (z2*prop.dist2))
+ plot(x,y, pch=20, xlim=c(-patches.x/100, patches.x/100))	# combined distribution
 
 
 z <- which(x==median(x)) # find the central point of the distribution
@@ -84,6 +86,9 @@ for(i in 1:length(y2/2)){
 	new.cum.dist <- (y2[z-i+1] - y2[z-(i+1)]) + (y2[z+i+1] - y2[z+(i-1)])	# add the two amounts on either side of the existing sum 
 		# (working from middle value outwards)
 	cum.dist <- cum.dist + new.cum.dist	# add those amounts to the cumulative sum
+	print(i)
+	print(new.cum.dist)
+	print(cum.dist)
 }
 # number of cells on either side of the middle to include
 cells.either.side <- i
@@ -99,7 +104,7 @@ for(i in 1:length(y2/2)){
 }
 
 normalized.kernel.1d <- kernel.1d/sum(kernel.1d)	# normalize the probabilities to sum to 1
-
+plot(1:cells.to.break.kernel.into, normalized.kernel.1d)
 
 # multiply it by itself to create the 2-D
 horizontal.to.multiply <- matrix(NA, nrow=length(normalized.kernel.1d), ncol=length(normalized.kernel.1d))
