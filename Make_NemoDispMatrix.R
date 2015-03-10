@@ -14,19 +14,61 @@ patches.y <- 200		# number of patches lined up vertically in the cylinder
 	# mostly irrelevant for figuring out dispersal kernel, except don't want it to loop entirely around the cylinder
 	# cut in half when creating the landscape because I want symmetry so the edges match up, the landscape will be made then mirrored
 
+# how big in 1-D is a patch (meters here)
+cell <- 50
+# landscape size
+land.x <- 1000000	# 1000 km = 1,000,000 m
+land.y <- 50000		# 50 km = 50,000 m
+
+cells.x <- land.x/cell
+cells.y <- land.y/cell
+
+(total.cells <- cells.x * cells.y)
+
 
 
 # CREATE THE DISPERSAL MATRIX
 
 # dispersal kernel from 1 patch to surrounding patches
 #	want it to be Gaussian and vary to having more LDD (long distance dispersal)
-dist.mean <- 0	# mean should stay at zero as dispersal is centered around natal patch
-dist.sd <- 0.75	# this is sigma, one standard deviation
+dist.mean <- 0		# mean should stay at zero as dispersal is centered around natal patch
+dist.sd <- 150		# this is sigma, one standard deviation, in meters
+
+# scale the landscape, and want to cut off at 4 sigma, so how many cells (in 1-D) are there within 4 sigma:
+units <- dist.sd/cell		# number of cells per one sigma
+four.sigma.units <- 4*units	# number of cells per four sigma IN ONE DIRECTION
+
+cells.in.1D.kernel <- four.sigma.units + four.sigma.units + 1
+		# total cells going across the one-dimensional kernel are those one either side plus the central/natal one
+
+# make the 1-D kernel
+kernel.1d <- rep(NA, cells.in.1D.kernel)
+k <- 1
+for(i in -four.sigma.units:four.sigma.units){
+	left.boundary <- (i-0.5)*cell
+	right.boundary <- (i+0.5)*cell
+	kernel.1d[k] <- pnorm(q=right.boundary, sd=dist.sd) - pnorm(q=left.boundary, sd=dist.sd)
+	k <- k + 1
+	print(c(i, k))
+	print(c(left.boundary, right.boundary))
+	print(pnorm(q=right.boundary, sd=dist.sd) - pnorm(q=left.boundary, sd=dist.sd))
+}
+	# correct to have the halves because the center cell in a sense can be thought of as zero space since not migrating leaves you there
+	# still need to renormalize because only have the cumulative within 4 sigma
+normalized.kernel.1d <- kernel.1d/sum(kernel.1d)	# normalize the probabilities to sum to 1
+	
+
+########################################################################################################################
+########################################################################################################################
+########################################################################################################################
+########################################################################################################################
+
 
 par(mfrow=c(2,1))
 #plot this kernel
-x <- seq(-patches.x, patches.x, by=0.1)  # vector of length odd number so that there can be a middle match
+x <- seq(-patches.x/5, patches.x/5, by= 0.1)  # vector of length odd number so that there can be a middle match
 y <- dnorm(x, mean=dist.mean, sd=dist.sd)
+y3 <- dnorm(x+0.5, mean=dist.mean, sd=dist.sd)
 plot(x,y, pch=20, xlim=c(-patches.x/100, patches.x/100))
 
 #plot the cumulative density of this kernel
@@ -68,8 +110,9 @@ points(x, ((y*prop.dist1) + (z*prop.dist2)), col="blue")
 #  *** IF USING MULTIPLE DISTRIBUTIONS FROM ABOVE, UNCODE FOLLOWING LINES to use the values combined and normalized
 #	z will be overwritten in the code below, so don't try to use it again
 #
-# y <- ((y*prop.dist1) + (z*prop.dist2))
-# y2 <- ((y2*prop.dist1) + (z2*prop.dist2))
+ y <- ((y*prop.dist1) + (z*prop.dist2))
+ y2 <- ((y2*prop.dist1) + (z2*prop.dist2))
+ plot(x,y, pch=20, xlim=c(-patches.x/100, patches.x/100))	# combined distribution
 
 
 z <- which(x==median(x)) # find the central point of the distribution
@@ -84,6 +127,9 @@ for(i in 1:length(y2/2)){
 	new.cum.dist <- (y2[z-i+1] - y2[z-(i+1)]) + (y2[z+i+1] - y2[z+(i-1)])	# add the two amounts on either side of the existing sum 
 		# (working from middle value outwards)
 	cum.dist <- cum.dist + new.cum.dist	# add those amounts to the cumulative sum
+	print(i)
+	print(new.cum.dist)
+	print(cum.dist)
 }
 # number of cells on either side of the middle to include
 cells.either.side <- i
@@ -99,7 +145,7 @@ for(i in 1:length(y2/2)){
 }
 
 normalized.kernel.1d <- kernel.1d/sum(kernel.1d)	# normalize the probabilities to sum to 1
-
+plot(1:cells.to.break.kernel.into, normalized.kernel.1d)
 
 # multiply it by itself to create the 2-D
 horizontal.to.multiply <- matrix(NA, nrow=length(normalized.kernel.1d), ncol=length(normalized.kernel.1d))
