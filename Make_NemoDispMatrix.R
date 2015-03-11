@@ -32,7 +32,7 @@ cells.y <- land.y/cell
 # dispersal kernel from 1 patch to surrounding patches
 #	want it to be Gaussian and vary to having more LDD (long distance dispersal)
 dist.mean <- 0		# mean should stay at zero as dispersal is centered around natal patch
-dist.sd <- 150		# this is sigma, one standard deviation, in meters
+dist.sd <- 125		# this is sigma, one standard deviation, in meters
 
 # scale the landscape, and want to cut off at 4 sigma, so how many cells (in 1-D) are there within 4 sigma:
 units <- dist.sd/cell		# number of cells per one sigma
@@ -51,6 +51,11 @@ for(i in -four.sigma.units:four.sigma.units){
 	kernel.1d[k] <- pnorm(q=right.boundary, sd=dist.sd) - pnorm(q=left.boundary, sd=dist.sd)
 	k <- k+1
 }
+
+# actually just take the first half and copy it to the second half, because the numbers slightly differ at the 12th decimal place otherwise.
+# might be slightly inaccurate, but will ensure accuracy down the line and a perfect mirror image
+kernel.1d <- c(kernel.1d[1:center.cell], kernel.1d[(center.cell-1):1])
+
 	# correct to have the halves because the center cell in a sense can be thought of as zero space since not migrating leaves you there
 	# still need to renormalize because only have the cumulative within 4 sigma
 normalized.kernel.1d <- kernel.1d/sum(kernel.1d)	# normalize the probabilities to sum to 1
@@ -89,6 +94,11 @@ for(i in -second.four.sigma.units:second.four.sigma.units){
 	second.kernel.1d[k] <- pnorm(q=right.boundary, sd=second.dist.sd) - pnorm(q=left.boundary, sd=second.dist.sd)
 	k <- k+1
 }
+
+# actually just take the first half and copy it to the second half, because the numbers slightly differ at the 12th decimal place otherwise.
+# might be slightly inaccurate, but will ensure accuracy down the line and a perfect mirror image
+second.kernel.1d <- c(second.kernel.1d[1:second.center.cell], second.kernel.1d[(second.center.cell-1):1])
+
 	# correct to have the halves because the center cell in a sense can be thought of as zero space since not migrating leaves you there
 	# still need to renormalize because only have the cumulative within 4 sigma
 second.normalized.kernel.1d <- second.kernel.1d/sum(second.kernel.1d)	# normalize the probabilities to sum to 1
@@ -134,6 +144,7 @@ plot(1:cells.in.1D.kernel, normalized.kernel.1d)
 # multiply it by itself to create the 2-D
 horizontal.to.multiply <- matrix(NA, nrow=length(normalized.kernel.1d), ncol=length(normalized.kernel.1d))
 vertical.to.multiply <- matrix(NA, nrow=length(normalized.kernel.1d), ncol=length(normalized.kernel.1d))
+
 for(j in 1:length(normalized.kernel.1d)){
 	horizontal.to.multiply[j,] <- normalized.kernel.1d
 	vertical.to.multiply[,j] <- normalized.kernel.1d
@@ -147,8 +158,9 @@ library(graphics)
 contour(multiplied.kernels, asp=1, nlevels= four.sigma.units)
 
 # find the cutoff value for distance travelled, i.e. which contours don't make the full circle around because they travel farther than the central column/row?
-lower.cutoff <- multiplied.kernels[1,center.cell]
-multiplied.kernels[multiplied.kernels < lower.cutoff] <- 0	# replace values lower than the cutoff with zero
+lower.cutoff <- multiplied.kernels[1, center.cell]
+multiplied.kernels[multiplied.kernels < lower.cutoff] <- 0
+	# replace values lower than the cutoff with zero
 # plot the multiplied matrix that's been cut off to circular distances
 contour(multiplied.kernels, asp=1, nlevels= four.sigma.units)
 
