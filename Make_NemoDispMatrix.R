@@ -9,16 +9,16 @@
 
 # FOR A LANDSCAPE OF A GIVEN SIZE
 
-patches.x <- 1000	# number of patches going horizontally in the cylinder, the range will expand in this direction
-patches.y <- 200		# number of patches lined up vertically in the cylinder
+#patches.x <- 1000	# number of patches going horizontally in the cylinder, the range will expand in this direction
+#patches.y <- 200		# number of patches lined up vertically in the cylinder
 	# mostly irrelevant for figuring out dispersal kernel, except don't want it to loop entirely around the cylinder
 	# cut in half when creating the landscape because I want symmetry so the edges match up, the landscape will be made then mirrored
 
 # how big in 1-D is a patch (meters here)
 cell <- 50
 # landscape size
-land.x <- 1000000	# 1000 km = 1,000,000 m
-land.y <- 50000		# 50 km = 50,000 m
+land.x <- 1000	# 1000 km = 1,000,000 m
+land.y <- 500		# 50 km = 50,000 m
 
 cells.x <- land.x/cell
 cells.y <- land.y/cell
@@ -38,6 +38,7 @@ dist.sd <- 150		# this is sigma, one standard deviation, in meters
 units <- dist.sd/cell		# number of cells per one sigma
 four.sigma.units <- 4*units	# number of cells per four sigma IN ONE DIRECTION
 
+center.cell <- four.sigma.units + 1
 cells.in.1D.kernel <- four.sigma.units + four.sigma.units + 1
 		# total cells going across the one-dimensional kernel are those one either side plus the central/natal one
 
@@ -48,104 +49,87 @@ for(i in -four.sigma.units:four.sigma.units){
 	left.boundary <- (i-0.5)*cell
 	right.boundary <- (i+0.5)*cell
 	kernel.1d[k] <- pnorm(q=right.boundary, sd=dist.sd) - pnorm(q=left.boundary, sd=dist.sd)
-	k <- k + 1
-	print(c(i, k))
-	print(c(left.boundary, right.boundary))
-	print(pnorm(q=right.boundary, sd=dist.sd) - pnorm(q=left.boundary, sd=dist.sd))
+	k <- k+1
 }
 	# correct to have the halves because the center cell in a sense can be thought of as zero space since not migrating leaves you there
 	# still need to renormalize because only have the cumulative within 4 sigma
 normalized.kernel.1d <- kernel.1d/sum(kernel.1d)	# normalize the probabilities to sum to 1
-	
+plot(1:cells.in.1D.kernel, normalized.kernel.1d)
+
 
 ########################################################################################################################
-########################################################################################################################
-########################################################################################################################
-########################################################################################################################
-
-
-par(mfrow=c(2,1))
-#plot this kernel
-x <- seq(-patches.x/5, patches.x/5, by= 0.1)  # vector of length odd number so that there can be a middle match
-y <- dnorm(x, mean=dist.mean, sd=dist.sd)
-y3 <- dnorm(x+0.5, mean=dist.mean, sd=dist.sd)
-plot(x,y, pch=20, xlim=c(-patches.x/100, patches.x/100))
-
-#plot the cumulative density of this kernel
-y2 <- pnorm(x, mean=dist.mean, sd=dist.sd)
-plot(x,y2, pch=20, xlim=c(-patches.x/100, patches.x/100))
-
-
 ########################################################################################################################
 #
 #	for summing 2 distributions to create kurtosis:
 #
+# do the above again for a second distribution, sum the 1-D kernels and normalize
+#
+#	*** NOTE ***
+#	WHEN SUMMING THE KERNELS, MAKE SURE TO ADD AFTER CENTERING AROUND 0
+#
+# dispersal kernel from 1 patch to surrounding patches
+#	want it to be Gaussian and vary to having more LDD (long distance dispersal)
+second.dist.mean <- 0		# mean should stay at zero as dispersal is centered around natal patch
+second.dist.sd <- 1000		# this is sigma, one standard deviation, in meters
 
-dist.sd2 <- 8	# sigma of second distribution
-z <- dnorm(x, mean=dist.mean, sd=dist.sd2)	# uses the same x values
-plot(x,z, pch=20, xlim=c(-patches.x/100, patches.x/100))
-	# plot that distribution alone, not useful because R scales automatically
+# scale the landscape, and want to cut off at 4 sigma, so how many cells (in 1-D) are there within 4 sigma:
+second.units <- second.dist.sd/cell		# number of cells per one sigma
+second.four.sigma.units <- 4*second.units	# number of cells per four sigma IN ONE DIRECTION
 
-#plot the cumulative density of this kernel, also not really useful
-z2 <- pnorm(x, mean=dist.mean, sd=dist.sd)
-plot(x,z2, pch=20, xlim=c(-patches.x/100, patches.x/100))
+second.center.cell <- second.four.sigma.units + 1
+second.cells.in.1D.kernel <- second.four.sigma.units + second.four.sigma.units + 1
+		# total cells going across the one-dimensional kernel are those one either side plus the central/natal one
 
-# what proportion of the total do I want the first distribution to take up?
-prop.dist1 <- 0.5
-prop.dist2 <- 1 - prop.dist1	# only using 2 distributions total, so proportion for the second distribution is 1 minus the first
+# make the 1-D kernel
+second.kernel.1d <- rep(NA, second.cells.in.1D.kernel)
+k <- 1
+for(i in -second.four.sigma.units:second.four.sigma.units){
+	left.boundary <- (i-0.5)*cell
+	right.boundary <- (i+0.5)*cell
+	second.kernel.1d[k] <- pnorm(q=right.boundary, sd=second.dist.sd) - pnorm(q=left.boundary, sd=second.dist.sd)
+	k <- k+1
+}
+	# correct to have the halves because the center cell in a sense can be thought of as zero space since not migrating leaves you there
+	# still need to renormalize because only have the cumulative within 4 sigma
+second.normalized.kernel.1d <- second.kernel.1d/sum(second.kernel.1d)	# normalize the probabilities to sum to 1
 
-plot(x,y, pch=20, xlim=c(-patches.x/100, patches.x/100))	# first distribution
-points(x,z, col="red")		# second distribution
-points(x, ((y*prop.dist1) + (z*prop.dist2)), col="blue")
-	# divide by 2 because have to normalize to one since there are two distributions
+diff.in.length <- abs(length(normalized.kernel.1d) - length(second.normalized.kernel.1d))
+each.end.diff <- diff.in.length/2
+# which is the shorter one:
+if((length(normalized.kernel.1d) - length(second.normalized.kernel.1d)) < 0){	# then first kernel is shorter, add to it's length
+	second.shorter <- FALSE
+	long.normalized.kernel.1d <- c(rep(0, each.end.diff), normalized.kernel.1d, rep(0, each.end.diff))
+	plot(-second.four.sigma.units:second.four.sigma.units, second.normalized.kernel.1d, ylim=c(0,0.5), col="red")
+	points(-second.four.sigma.units:second.four.sigma.units, long.normalized.kernel.1d, col="blue")
+}
+if((length(normalized.kernel.1d) - length(second.normalized.kernel.1d)) > 0){	# then second kernel is shorter, add to it's length
+	second.shorter <- TRUE
+	second.normalized.kernel.1d <- c(rep(0, each.end.diff), second.normalized.kernel.1d, rep(0, each.end.diff))
+	plot(-four.sigma.units:four.sigma.units, normalized.kernel.1d, ylim=c(0,0.5), col="red")
+	points(-four.sigma.units:four.sigma.units, second.normalized.kernel.1d, col="blue")
+}
 
+prop.first.kernel <- 0.5
+prop.second.kernel <- 1 - prop.first.kernel
+summed.1d.kernels <- (long.normalized.kernel.1d * prop.first.kernel) + (second.normalized.kernel.1d * prop.second.kernel)
+
+# just for the plot, to know which x values to use
+if(second.shorter==FALSE){
+	points(-second.four.sigma.units:second.four.sigma.units, summed.1d.kernels, pch=20, cex=0.75)
+}else{
+	points(-four.sigma.units:four.sigma.units, summed.1d.kernels, pch=20, cex=0.75)
+}
+
+########################################################################################################################
 ########################################################################################################################
 
 
-# create the kernel in 1-D
-# cut it off to a meaningful tail - here, 99.9% of the distribution is included
-
-
-
-#  *** IF USING MULTIPLE DISTRIBUTIONS FROM ABOVE, UNCODE FOLLOWING LINES to use the values combined and normalized
-#	z will be overwritten in the code below, so don't try to use it again
+# IF USING COMBINATION OF 2 KERNELS, UNCODE FOLLOWING LINE
 #
- y <- ((y*prop.dist1) + (z*prop.dist2))
- y2 <- ((y2*prop.dist1) + (z2*prop.dist2))
- plot(x,y, pch=20, xlim=c(-patches.x/100, patches.x/100))	# combined distribution
+# normalized.kernel.1d <- summed.1d.kernels
 
-
-z <- which(x==median(x)) # find the central point of the distribution
-# take the distribution up to 99.99% cumulative, from the middle -> 4sigma is 99.9936 percent of the distribution
-cum.dist <- y2[z+1]-y2[z-1]	# get the area under the curve between the previous and the next point in the distribution
-	# the number of points this is divided up into currently was the number of patches in the x-direction
-	# could make it finer scale by increasing that division
-	#	i.e. the length of y2 would be greater as it is the cumulative distribution broke into parts
-for(i in 1:length(y2/2)){	
-	# only need to go to the 50% mark in y2 because I'm summing on both sides of the center, going from the center outward
-	if(cum.dist >= 0.9999) break	# stop the loop when I have 4 sigma, use i value at this point below for how far the loop got
-	new.cum.dist <- (y2[z-i+1] - y2[z-(i+1)]) + (y2[z+i+1] - y2[z+(i-1)])	# add the two amounts on either side of the existing sum 
-		# (working from middle value outwards)
-	cum.dist <- cum.dist + new.cum.dist	# add those amounts to the cumulative sum
-	print(i)
-	print(new.cum.dist)
-	print(cum.dist)
-}
-# number of cells on either side of the middle to include
-cells.either.side <- i
-cells.to.break.kernel.into <- cells.either.side + cells.either.side + 1		# add 1 for the center cell
-
-kernel.1d <- rep(NA, cells.to.break.kernel.into)
-natal.patch <- median(1:cells.to.break.kernel.into)		# the central patch is the natal patch around which dispersal is centered
-kernel.1d[natal.patch] <- y2[z+1]-y2[z-1]		# value in the central, natal patch, cell
-for(i in 1:length(y2/2)){
-	if(i > cells.either.side) break		# makes the loop stop once we've filled all the avaliable cells in the kernel with values
-	kernel.1d[natal.patch+i] <- (y2[z-i+1] - y2[z-(i+1)])	# add the two amounts on either side of the existing sum 
-	kernel.1d[natal.patch-i] <- (y2[z-i+1] - y2[z-(i+1)])	# add the two amounts on either side of the existing sum 
-}
-
-normalized.kernel.1d <- kernel.1d/sum(kernel.1d)	# normalize the probabilities to sum to 1
-plot(1:cells.to.break.kernel.into, normalized.kernel.1d)
+#normalized.kernel.1d <- kernel.1d/sum(kernel.1d)	# normalize the probabilities to sum to 1
+plot(1:cells.in.1D.kernel, normalized.kernel.1d)
 
 # multiply it by itself to create the 2-D
 horizontal.to.multiply <- matrix(NA, nrow=length(normalized.kernel.1d), ncol=length(normalized.kernel.1d))
@@ -160,20 +144,21 @@ multiplied.kernels <- horizontal.to.multiply * vertical.to.multiply
 
 # plot the multiplied matrix
 library(graphics)
-contour(multiplied.kernels, asp=1, nlevels=length(normalized.kernel.1d))
+contour(multiplied.kernels, asp=1, nlevels= four.sigma.units)
 
 # find the cutoff value for distance travelled, i.e. which contours don't make the full circle around because they travel farther than the central column/row?
-lower.cutoff <- multiplied.kernels[1,which(normalized.kernel.1d==max(normalized.kernel.1d))]
+lower.cutoff <- multiplied.kernels[1,center.cell]
 multiplied.kernels[multiplied.kernels < lower.cutoff] <- 0	# replace values lower than the cutoff with zero
 # plot the multiplied matrix that's been cut off to circular distances
-contour(multiplied.kernels, asp=1, nlevels=length(normalized.kernel.1d))
+contour(multiplied.kernels, asp=1, nlevels= four.sigma.units)
 
 # restandardize so all sums to 1
 restandardized.multiplied.kernels <- multiplied.kernels/sum(multiplied.kernels)
-contour(restandardized.multiplied.kernels, asp=1, nlevels=length(normalized.kernel.1d))
+contour(restandardized.multiplied.kernels, asp=1, nlevels= four.sigma.units)
 disp.kernel <- restandardized.multiplied.kernels
 
-middle.of.kernel <- ceiling(length(disp.kernel[,1])/2)	# works because there are an odd number for the length/width
+middle.of.kernel <- center.cell
+	# ceiling(length(disp.kernel[,1])/2)	# works because there are an odd number for the length/width
 max.dist.include.natal <- middle.of.kernel	# the maximum number of cells an individual might migrate including 1 as staying in natal patch
 max.dist.exclude.natal <- middle.of.kernel - 1
 
