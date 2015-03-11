@@ -17,8 +17,8 @@
 # how big in 1-D is a patch (meters here)
 cell <- 50
 # landscape size
-land.x <- 1000	# 1000 km = 1,000,000 m
-land.y <- 500		# 50 km = 50,000 m
+land.x <- 10000	# 1000 km = 1,000,000 m
+land.y <- 5000		# 50 km = 50,000 m
 
 cells.x <- land.x/cell
 cells.y <- land.y/cell
@@ -186,8 +186,8 @@ max.dist.exclude.natal <- middle.of.kernel - 1
 
 
 # dispersal matrix needs to be patch number x patch number with columns summing to 1
-#patches.x
-#patches.y
+patches.x <- cells.x
+patches.y <- cells.y
 total.patches <- patches.x * patches.y
 
 disp.mat <- matrix(0, nrow= total.patches, ncol= total.patches) 	
@@ -384,50 +384,3 @@ expansion <- paste(c("{", paste(rep(K, total.patches), collapse=", "), "}"), col
 #############################################################################################################################
 #############################################################################################################################
 #############################################################################################################################
-
-#temp <- as.matrix(cbind.data.frame(as.matrix(rep("{", total.patches)), disp.mat, as.matrix(rep("}", total.patches))))
-#temp2 <- disp.mat
-#temp3 <- cbind(NA, disp.mat, NA)
-#temp2$end <- rep("}", total.patches)
-#new.mat <- read.table("DispMatrix.txt")
-#test <- cbind(rep("{", total.patches), new.mat, rep("}", total.patches))
-#write(as.matrix(test), file="test_DispMatrix.txt", ncolumns=(total.patches+2))
-
-
-# forward migration, each row needs to sum to 1
-#for(i in 1: total.patches){		# go through one row, i.e. one patch
-#	for(j in 1: total.patches){	# proceed through that row's columns, i.e. one patch
-		# patch 1 to patch 1
-		# 2 to 2
-		# 3 to 3 .... etc
-#		temp.sum <- 0
-#		if(i == j) {
-#			disp.mat[i,j] <- disp.kernel[middle.of.kernel, middle.of.kernel] # we are in the natal patch, give it that dispersal probability
-#			temp.sum <- temp.sum + disp.kernel[middle.of.kernel, middle.of.kernel]	# want to make sure we stop putting values in when we've reached the sum of 1
-#		}
-#		if(i != j){		# we are not in the natal patch, figure out where we are in the kernel
-#			diff <- j-i	# how many patches are we from the natal patch in that row?
-#			if(diff <= max.dist.include.natal){			
-#			}
-#		}
-#	}
-#}
-
-
-
-
-# not sure if I need this? patch ids jsut within the dispersal kernel
-#kernel.ids <- matrix(0, nrow=length(disp.kernel[,1]), ncol=length(disp.kernel[1,]))
-#for(i in 1:length(disp.kernel)){
-#	kernel.ids[i] <- i
-#}
-
-# don't need the array because things seem to stay lined up without it, so can just paste them in, saving the code below just in case though
-
-#potential.patches.matching.kernel.with.disp.array <- c(as.vector(potential.patches.matching.kernel), as.vector(disp.kernel))
-#dim(potential.patches.matching.kernel.with.disp.array) <- c((max.dist.include.natal+ max.dist.exclude.natal), (max.dist.include.natal+ max.dist.exclude.natal), 2)
-
-# NOW HAVE AN ARRAY TO CALL FROM for patch ID and it's probability of being dispersed to by the focal patch
-
-
-
